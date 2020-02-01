@@ -1,6 +1,6 @@
-== Ensembl application
+# Ensembl application
 
-=== The exercise
+### The exercise
 
 * Use the latest human data and the Perl API for Ensembl release 98
 
@@ -10,15 +10,25 @@
 
 * Run script as a command-line program
 
+### Alternatives 
+
+* See REST notes for GRCh37 here: `https://www.ensembl.org/info/docs/index.html`
+
+* and accessing Ensembl data here: `https://www.ensembl.org/info/docs/tools/index.html`
 
 
+* Set env to find default db conns
+ENSEMBL_REGISTRY="ensembl-application/ensembl_registry.conf"
+export ENSEMBL_REGISTRY
 
 
-== Steps
+## Steps
 
-* Ensure perl is up-to-date (brew update perl)
+* Ensure perl is up-to-date (brew update perl). Using version 5.26, which is documented as being compatible (https://www.ensembl.org/info/docs/api/api_installation.html).
 
-* Load perl modules needed for Ensembl registry
+* Install Perl API (https://www.ensembl.org/info/docs/api/api_installation.html)
+
+* Export PERL5LIB environment variable as in video tutorial and incorporate lib path into perl script.
 
 * Create a 
 

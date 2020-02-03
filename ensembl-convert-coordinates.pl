@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
 # Brief
-# 1. Use the latest human data and the Perl API for Ensembl release 98
+# 1. Use the latest human data and the Perl API for latest Ensembl release
 # 2. Convert coordinates on chromosome (e.g. chromosome 10 from 25000 to 
 # 30000) to the same region in GRCh37
 # 3. Make the script as generic as possible
@@ -13,6 +13,7 @@ use warnings;
 use FindBin;
 use DBD::mysql;
 use Data::Dumper;
+use Getopt::Long;
 
 # tell perl how to find ensembl-related modules
 use lib "$FindBin::Bin/src/bioperl-1.6.924";
@@ -27,6 +28,50 @@ use Bio::EnsEMBL::Utils::ConfigRegistry;
 use Bio::EnsEMBL::DBSQL::DBAdaptor;
 use Bio::EnsEMBL::Compara::DBSQL::DBAdaptor;
 
+# get arguments from user
+my $USAGE = <<"_USAGE";
+Usage:
+$0 [required]
+
+Required:
+                --coordinates_string       Coordinates string to be converted
+
+Optional:
+                --species                  Species (default: human)
+                --port                     Database port (default: 3337)
+
+Example:
+$0 \
+   --coordinates_string          chromosome:20:20000:30000:1:GRCh38 \
+   --species                     Human \
+   --port                        3337 \
+
+Takes a coordinates string specifying a given genome assembly version (e.g. GRCh38) and maps it 
+onto a different genome assembly version (e.g. GRCh37).
+_USAGE
+
+sub USAGE {
+        print $USAGE;
+        print "Error: @_\n" if scalar @ARGV;
+        exit;
+}
+
+USAGE() unless scalar @ARGV;
+
+# set defaults
+my $coordinates_string; # coordinates string
+my $species = "Human";  # species
+my $port = "3337";      # database port
+my $group = "core";     # core Ensembl data
+
+# process user input
+GetOptions(
+    "coordinates_string=s" => \$coordinates_string,
+    "species=s"            => \$species,
+    "port=s"               => \$port,
+) or die( "Error in command line args.\n" );
+
+USAGE( "Coordinate string must be specified" ) unless defined $coordinates_string;
 
 # get a new registry object
 my $registry = 'Bio::EnsEMBL::Registry';
@@ -76,15 +121,23 @@ $registry->load_registry_from_db(
 
 # print "registry: $registry\n";
 
+# good test example going opposite way to Ensembl REST example 
+# which shows this program works
+# (http://rest.ensembl.org/documentation/info/assembly_map)
+# chromosome:X:1039265:1039365:1:GRCh38:human
+# example provided on technical assessment notes
+# chromosome:20:25000:30000:1:GRCh38:human
+# chromosome:20:1e6:2e6:1:GRCh38:human
+
 # process variables
-my $seq_object = "chromosome";
-my $seq_object_id = "20";
-my $seq_start   = 1e6;
-my $seq_stop    = 2e6;
-my $seq_strand  = "1";
-my $genome_assembly_version = "GRCh38";
-my $species = "human";
-my $group = "core";
+my ( 
+  $seq_object,
+  $seq_object_id,
+  $seq_start,
+  $seq_stop,
+  $seq_strand,
+  $genome_assembly_version
+) = split( /:/, $coordinates_string );
 
 # get a slice adaptor for the human core database
 my $slice_adaptor = $registry->get_adaptor( 'Human', 'Core', 'Slice' );
@@ -96,20 +149,13 @@ my $slice_adaptor = $registry->get_adaptor( 'Human', 'Core', 'Slice' );
 
 my $cs_adaptor = $registry->get_adaptor( 'Human', 'Core', 'CoordSystem' );
 my $cs = $cs_adaptor->fetch_by_name($seq_object);
-# my $cs = $cs_adaptor->fetch_by_dbID('homo_sapiens_core_98_38');
 
-# get a list of all the coordinate systems with the name
-# matching $seq_object
-# foreach my $cs_entry ( @{ $cs_adaptor->fetch_all_by_name($seq_object) } ) {
-#   print $cs_entry->name, " ", $cs->version, "\n";
-# }
-
-printf "Coordinate system: %s %s\n", $cs->name(), $cs->version();
+printf "Mapping from assembly: '%s' to: '%s' using coordinate system: '%s'\n", $genome_assembly_version, $cs->version(), $cs->name();
 
 # get a slice covered by a given region on a given chromosome
 my $slice = $slice_adaptor->fetch_by_region( $seq_object, $seq_object_id, $seq_start, $seq_stop, $seq_strand, $genome_assembly_version );
 
-printf( "# %s\n", $slice->name() );
+# printf( "# %s\n", $slice->name() );
 
 # assign slice object attributes to variables
 # gives more clarity when printing out
@@ -121,10 +167,10 @@ my $strand  ||= $slice->strand();
 my $version ||= $slice->coord_system()->version();
 
 # go through each segment in
-my $segment_counter = 0;
+my $segment_counter = 1;
 foreach my $segment ( @{ $slice->project($seq_object) } ) {
 
-  print "Segment #${segment_counter}:\n";
+  print "Converted segment #${segment_counter}:\n";
 
   # print Dumper( $segment->to_Slice() );
 

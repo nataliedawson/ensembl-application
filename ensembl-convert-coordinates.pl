@@ -37,20 +37,23 @@ Usage:
 $0 [required]
 
 Required:
-                --coordinates_string       Coordinates string to be converted
+
+  --coordinates_string      Coordinates string to be converted.
+                            chromosome:chromosome_id:sequence_start:sequence_stop:strand:genome_assembly_version
 
 Optional:
-                --species                  Species (default: human)
-                --port                     Database port (default: 3337)
 
-Example:
-$0 \
-   --coordinates_string          chromosome:20:20000:30000:1:GRCh38 \
-   --species                     Human \
-   --port                        3337 \
+  --port                    Database port (default: 3337)
+
+Examples:
+
+  $0 --coordinates_string="chromosome:20:20000:30000:1:GRCh38" \
+
+   $0 --coordinates_string="chromosome:20:20000:30000:1:GRCh38" --port="3337" \
 
 Takes a coordinates string specifying a given genome assembly version (e.g. GRCh38) and maps it 
 onto a different genome assembly version (e.g. GRCh37).
+
 _USAGE
 
 sub USAGE {
@@ -102,7 +105,6 @@ printf("SEQUENCE START          : %s\n", $seq_start);
 printf("SEQUENCE STOP           : %s\n", $seq_stop);
 printf("STRAND                  : %s\n", $seq_strand);
 printf("GENOME ASSEMBLY VERSION : %s\n", $genome_assembly_version);
-printf("SPECIES                 : %s\n", $species);
 printf("DATABASE PORT           : %s\n", $port);
 printf("GROUP                   : %s\n", $group);
 print "\n";
@@ -117,7 +119,7 @@ $registry->load_registry_from_db(
       -host => 'ensembldb.ensembl.org',
       -user => 'anonymous',
       -port => $port,
-      # -species => 'homo_sapiens',
+      -species => 'homo_sapiens',
 );
 
 # load registry from multiple databases
@@ -178,7 +180,9 @@ my $cs_adaptor = $registry->get_adaptor( $species, $group, 'CoordSystem' );
 my $cs = $cs_adaptor->fetch_by_name($coord_system_name);
 
 print "Performing the conversion...\n\n";
-printf "Mapping from assembly: '%s' to: '%s' using coordinate system: '%s'\n", $genome_assembly_version, $cs->version(), $cs->name();
+
+printf("MAPPING FROM ASSEMBLY : %s\n", $genome_assembly_version); 
+printf("MAPPING TO ASSEMBLY   : %s\n\n", $cs->version());
 
 # get a slice covered by a given region on a given chromosome
 my $slice = $slice_adaptor->fetch_by_region( $coord_system_name, $seq_region_name, $seq_start, $seq_stop, $seq_strand, $genome_assembly_version );
@@ -198,7 +202,7 @@ my $version ||= $slice->coord_system()->version();
 my $segment_counter = 1;
 foreach my $segment ( @{ $slice->project($coord_system_name) } ) {
 
-  print "#${segment_counter} converted segment :\n";
+  print "Converted segment #${segment_counter}:\n";
 
   # print Dumper( $segment->to_Slice() );
 

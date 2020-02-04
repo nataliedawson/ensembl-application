@@ -36,9 +36,13 @@
 
 * Install Perl API (https://www.ensembl.org/info/docs/api/api_installation.html)
 
+* Export PERL5LIB environment variable as in video tutorial and incorporate lib path into perl script.
+
+* Use cpanm to install the required perl modules: `cat requirements.txt | cpanm`
+
 * Please note that the Ensembl modules are in the `src/` subdirectory of this GitHub project. My script using the `FindBin` perl module to locate this modules. I haven't committed this directory to version control as it is large in size (~ 674 Mb).
 
-* Export PERL5LIB environment variable as in video tutorial and incorporate lib path into perl script.
+
 
 
 ## Some methods

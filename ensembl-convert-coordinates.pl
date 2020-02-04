@@ -1,5 +1,8 @@
 #!/usr/bin/env perl
 
+# Natalie Willhoft
+# Software Developer application
+
 # Brief
 # 1. Use the latest human data and the Perl API for latest Ensembl release
 # 2. Convert coordinates on chromosome (e.g. chromosome 10 from 25000 to 
@@ -62,7 +65,7 @@ USAGE() unless scalar @ARGV;
 my $coordinates_string; # coordinates string
 my $species = "Human";  # species
 my $port = "3337";      # database port
-my $group = "core";     # core Ensembl data
+my $group = "Core";     # core Ensembl data
 
 # process user input
 GetOptions(
@@ -73,16 +76,48 @@ GetOptions(
 
 USAGE( "Coordinate string must be specified" ) unless defined $coordinates_string;
 
+print "Processing user input...\n";
+
+# process variables
+my ( 
+  $coord_system_name,
+  $seq_region_name,
+  $seq_start,
+  $seq_stop,
+  $seq_strand,
+  $genome_assembly_version
+) = split( /:/, $coordinates_string );
+
+# complain heavily if a required variable has not been defined
+die "No coordinate system name provided (e.g. chromosome)\n" unless $coord_system_name;
+die "No sequence region name provided (e.g. 20)\n" unless $seq_region_name;
+die "No sequence start position provided (e.g. 25000)\n" unless $seq_start;
+die "No sequence stop position provided (e.g. 30000)\n" unless $seq_stop;
+die "No genome assembly version provided (e.g. GRCh38)\n" unless $genome_assembly_version;
+
+
+printf("COORDINATE SYSTEM NAME  : %s\n", $coord_system_name);
+printf("SEQUENCE REGION NAME    : %s\n", $seq_region_name);
+printf("SEQUENCE START          : %s\n", $seq_start);
+printf("SEQUENCE STOP           : %s\n", $seq_stop);
+printf("STRAND                  : %s\n", $seq_strand);
+printf("GENOME ASSEMBLY VERSION : %s\n", $genome_assembly_version);
+printf("SPECIES                 : %s\n", $species);
+printf("DATABASE PORT           : %s\n", $port);
+printf("GROUP                   : %s\n", $group);
+print "\n";
+
 # get a new registry object
 my $registry = 'Bio::EnsEMBL::Registry';
 
 # load the latest version of human genome GRCh37
 # to convert coordinates onto
+print "Load registry from database...\n";
 $registry->load_registry_from_db(
       -host => 'ensembldb.ensembl.org',
       -user => 'anonymous',
-      -port => '3337',
-      -species => 'homo_sapiens',
+      -port => $port,
+      # -species => 'homo_sapiens',
 );
 
 # load registry from multiple databases
@@ -129,31 +164,24 @@ $registry->load_registry_from_db(
 # chromosome:20:25000:30000:1:GRCh38:human
 # chromosome:20:1e6:2e6:1:GRCh38:human
 
-# process variables
-my ( 
-  $seq_object,
-  $seq_object_id,
-  $seq_start,
-  $seq_stop,
-  $seq_strand,
-  $genome_assembly_version
-) = split( /:/, $coordinates_string );
+
 
 # get a slice adaptor for the human core database
-my $slice_adaptor = $registry->get_adaptor( 'Human', 'Core', 'Slice' );
+my $slice_adaptor = $registry->get_adaptor( $species, $group, 'Slice' );
 
 # print Dumper( $slice_adaptor);
 # get slice from a whole chromosome
 # my $chr_slice = $slice_adaptor->fetch_by_region( 'chromosome', 'X' );
 
 
-my $cs_adaptor = $registry->get_adaptor( 'Human', 'Core', 'CoordSystem' );
-my $cs = $cs_adaptor->fetch_by_name($seq_object);
+my $cs_adaptor = $registry->get_adaptor( $species, $group, 'CoordSystem' );
+my $cs = $cs_adaptor->fetch_by_name($coord_system_name);
 
+print "Performing the conversion...\n\n";
 printf "Mapping from assembly: '%s' to: '%s' using coordinate system: '%s'\n", $genome_assembly_version, $cs->version(), $cs->name();
 
 # get a slice covered by a given region on a given chromosome
-my $slice = $slice_adaptor->fetch_by_region( $seq_object, $seq_object_id, $seq_start, $seq_stop, $seq_strand, $genome_assembly_version );
+my $slice = $slice_adaptor->fetch_by_region( $coord_system_name, $seq_region_name, $seq_start, $seq_stop, $seq_strand, $genome_assembly_version );
 
 # printf( "# %s\n", $slice->name() );
 
@@ -168,13 +196,13 @@ my $version ||= $slice->coord_system()->version();
 
 # go through each segment in
 my $segment_counter = 1;
-foreach my $segment ( @{ $slice->project($seq_object) } ) {
+foreach my $segment ( @{ $slice->project($coord_system_name) } ) {
 
-  print "Converted segment #${segment_counter}:\n";
+  print "#${segment_counter} converted segment :\n";
 
   # print Dumper( $segment->to_Slice() );
 
-  printf( "%s:%s:%s:%d:%d:%d,%s\n",
+  printf( "%s:%s:%s:%d:%d:%d => %s\n",
     $cs_name,
     $version,
     $sr_name,

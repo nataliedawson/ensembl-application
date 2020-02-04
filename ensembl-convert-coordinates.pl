@@ -33,13 +33,16 @@ use Bio::EnsEMBL::Compara::DBSQL::DBAdaptor;
 
 # get arguments from user
 my $USAGE = <<"_USAGE";
+Takes a coordinates string specifying a given genome assembly version (e.g. GRCh38) and maps it 
+onto a different genome assembly version (e.g. GRCh37).
+
 Usage:
-$0 [required]
+$0 [options] [required]
 
 Required:
 
   --coordinates_string      Coordinates string to be converted.
-                            chromosome:chromosome_id:sequence_start:sequence_stop:strand:genome_assembly_version
+                            i.e. "chromosome:chromosome_id:sequence_start:sequence_stop:strand:genome_assembly_version"
 
 Optional:
 
@@ -49,10 +52,9 @@ Examples:
 
   $0 --coordinates_string="chromosome:20:20000:30000:1:GRCh38" \
 
-   $0 --coordinates_string="chromosome:20:20000:30000:1:GRCh38" --port="3337" \
+  $0 --coordinates_string="chromosome:X:10000:20000:1:GRCh38" \
 
-Takes a coordinates string specifying a given genome assembly version (e.g. GRCh38) and maps it 
-onto a different genome assembly version (e.g. GRCh37).
+  $0 --coordinates_string="chromosome:20:20000:30000:1:GRCh38" --port="3337" \
 
 _USAGE
 

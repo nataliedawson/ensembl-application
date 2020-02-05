@@ -20,22 +20,23 @@
 
 1. Export PERL5LIB environment variable as in video tutorial and incorporate lib path into perl script using the FindBin module.
 
-* contents of my .profile file, which is stored in my home directory
-```
-# provide access to Ensembl perl modules
-BASEDIR=/Users/nataliewillhoft/github/ensembl-application
-PERL5LIB=${PERL5LIB}:$BASEDIR/src/ensembl/modules
-PERL5LIB=${PERL5LIB}:$BASEDIR/src/ensembl-variation/modules
-PERL5LIB=${PERL5LIB}:$BASEDIR/src/ensembl-compara/modules
-PERL5LIB=${PERL5LIB}:$BASEDIR/src/ensembl-funcgen/modules
-PERL5LIB=${PERL5LIB}:$BASEDIR/src/ensembl-tools/modules
-PERL5LIB=${PERL5LIB}:$BASEDIR/src/bioperl-1.6.924/
-export PERL5LIB
+    * contents of my .profile file, which is stored in my home directory
 
-# include path to modules installed with cpanm etc.
-PERL5LIB={$PERL5LIB}:/usr/local/lib/perl5/5.26.2/
-export PERL5LIB
-```
+    ```
+    # provide access to Ensembl perl modules
+    BASEDIR=/Users/nataliewillhoft/github/ensembl-application
+    PERL5LIB=${PERL5LIB}:$BASEDIR/src/ensembl/modules
+    PERL5LIB=${PERL5LIB}:$BASEDIR/src/ensembl-variation/modules
+    PERL5LIB=${PERL5LIB}:$BASEDIR/src/ensembl-compara/modules
+    PERL5LIB=${PERL5LIB}:$BASEDIR/src/ensembl-funcgen/modules
+    PERL5LIB=${PERL5LIB}:$BASEDIR/src/ensembl-tools/modules
+    PERL5LIB=${PERL5LIB}:$BASEDIR/src/bioperl-1.6.924/
+    export PERL5LIB
+
+    # include path to modules installed with cpanm etc.
+    PERL5LIB={$PERL5LIB}:/usr/local/lib/perl5/5.26.2/
+    export PERL5LIB
+    ```
 
 1. Use cpanm to install the required perl modules: `cat requirements.txt | cpanm`
 

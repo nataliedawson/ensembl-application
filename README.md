@@ -46,35 +46,20 @@
 
 * Describe at least one other way of retrieving the same information, along with its advantages and disadvantages.
 
-* See REST notes for GRCh37 here: `https://www.ensembl.org/info/docs/index.html`
+1. Could query the databases directly?
 
-* and accessing Ensembl data here: `https://www.ensembl.org/info/docs/tools/index.html`
+    * https://m.ensembl.org/info/website/tutorials/grch37.html :
+    * export Ensembl annotation on GRCh37 with BioMart
 
-* Could query the databases directly?
+1. Could use the Ensembl REST web service
 
-* https://m.ensembl.org/info/website/tutorials/grch37.html :
-* export Ensembl annotation on GRCh37 with BioMart
-* http://rest.ensembl.org/documentation/info/assembly_map - allows converting from 1. GRCh38 to 2. GRCh37, 3. a query region string, and 4. species string 
+    * See REST notes for GRCh37 here: `https://www.ensembl.org/info/docs/index.html`
 
-* Advantages of using REST API: don't need to know perl.
+    * and accessing Ensembl data here: `https://www.ensembl.org/info/docs/tools/index.html`
 
-1. Using the Ensembl tool called Assembly Converter. A user can perform the same mapping between from the human assembly GRCh38 to GRCh37 (http://www.ensembl.org/Homo_sapiens/Tools/AssemblyConverter). The tool uses the CrossMapper program to convert genome coordinates. This method appears advantageous because the user can simply perform the conversion in a web-based session and the tool accepts a number of file formats (e.g. BAM, BED, GFF3). Disadvantages to this method are that it is reliant on an internet connection and the user needs to be familiar with at least one of the input file formats.
+    * http://rest.ensembl.org/documentation/info/assembly_map - allows converting from 1. GRCh38 to 2. GRCh37, 3. a query region string, and 4. species string 
 
+    * Advantages of using REST API: don't need to know perl.
 
-
-
-
-
-
-
-## Some methods
-
-```
-# https://www.ensembl.org/info/docs/api/registry.html
-# use this to get the name 
-shell> mysql -u anonymous -h ensembldb.ensembl.org -P 3306
-mysql> SHOW DATABASES LIKE "homo_sapiens_core_%";
-```
-
-This gives a long list of databases to use, like the latest versions `homo_sapiens_core_75_37` and `homo_sapiens_core_99_38`.
+1. Using the Ensembl tool called Assembly Converter. A user can perform the same mapping between from the human assembly GRCh38 to GRCh37 (`http://www.ensembl.org/Homo_sapiens/Tools/AssemblyConverter`). The tool uses the CrossMapper program to convert genome coordinates. This method appears advantageous because the user can simply perform the conversion in a web-based session and the tool accepts a number of file formats (e.g. BAM, BED, GFF3). Disadvantages to this method are that it is reliant on an internet connection and the user needs to be familiar with at least one of the input file formats.
 

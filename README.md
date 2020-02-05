@@ -40,7 +40,7 @@
 
 1. Use cpanm to install the required perl modules: `cat requirements.txt | cpanm`
 
-* Please note that the Ensembl modules are in the `src/` subdirectory of this GitHub project. My script using the `FindBin` perl module to locate this modules. I haven't committed this directory to version control as it is large in size (~ 674 Mb).
+* Please note that the Ensembl modules are expected to be found in the `src/` subdirectory of this GitHub project. My script uses the `FindBin` perl module to locate these modules. I have not committed the contents of this directory to version control as it is large in size (~ 674 Mb).
 
 ### Answering the 'Alternatives' section
 

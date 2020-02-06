@@ -164,12 +164,9 @@ $registry->load_registry_from_db(
 # print "registry: $registry\n";
 
 # good test example going opposite way to Ensembl REST example 
-# which shows this program works
+# which suggests that this program works
 # (http://rest.ensembl.org/documentation/info/assembly_map)
 # chromosome:X:1039265:1039365:1:GRCh38:human
-# example provided on technical assessment notes
-# chromosome:20:25000:30000:1:GRCh38:human
-# chromosome:20:1e6:2e6:1:GRCh38:human
 
 # create a slice adaptor object for the human core database
 my $slice_adaptor = $registry->get_adaptor( $species, $group, 'Slice' );
@@ -203,7 +200,7 @@ my @converted_segments = @{ $slice->project($coord_system_name) };
 # account for cases where there might not be a mapping
 if ( scalar @converted_segments == 0 ) {
 
-  printf("Could not find a mapping for %s to %s", $coordinates_string, $cs->version());
+  printf("Could not find a mapping for '%s' in assembly version %s.\n", $coordinates_string, $cs->version());
   print "DONE.\n";
   
 } else {
@@ -225,7 +222,8 @@ if ( scalar @converted_segments == 0 ) {
       $segment->to_Slice()->name() 
     );
 
-    $segment_counter++;
+   $segment_counter++;
   }
+  print "DONE.\n";
 }
 

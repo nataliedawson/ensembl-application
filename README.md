@@ -2,25 +2,18 @@
 
 (Natalie Willhoft application)
 
-### The exercise
-
-* Use the latest human data and the Perl API for Ensembl release 98
-
-* Convert coordinates on chromosome (e.g. chromosome 10 from 25000 to 30000) to the same region in GRCh37
-
-* Make the script as generic as possible
-
-* Run script as a command-line program
-
 ## General steps in setting up environment to run my perl script
 
 1. Ensure perl is up-to-date (brew update perl). Using version 5.26, which is documented as being compatible (https://www.ensembl.org/info/docs/api/api_installation.html).
 
 1. Install Perl API (https://www.ensembl.org/info/docs/api/api_installation.html)
 
-1. Export PERL5LIB environment variable as in video tutorial and incorporate lib path into perl script using the FindBin module.
+1. Use git clone to retrieve the repository (please note that my github account is under my maiden name of Dawson)
+    `git clone git@github.com:nataliedawson/ensembl-application.git`
 
-    * contents of my .profile file, which is stored in my home directory
+1. Export PERL5LIB environment variable as in video tutorial. 
+
+    * For example, here are the contents of my .profile file, which is stored in my home directory
 
     ```
     # provide access to Ensembl perl modules
@@ -38,9 +31,13 @@
     export PERL5LIB
     ```
 
+1. Allow the perl script to find the Ensembl-specific perl modules. Please note that I have done this by incorporating the lib path into my script using the `FindBin` module.
+
+    * The Ensembl modules are expected to be found in the `src/` subdirectory of this GitHub project. My script uses the `FindBin` perl module to locate these modules. I have not committed the contents of this directory to version control as it is large in size (~ 674 Mb).
+
 1. Use cpanm to install the required perl modules: `cat requirements.txt | cpanm`
 
-* Please note that the Ensembl modules are expected to be found in the `src/` subdirectory of this GitHub project. My script uses the `FindBin` perl module to locate these modules. I have not committed the contents of this directory to version control as it is large in size (~ 674 Mb).
+1. The script is run by changing directory to within my repository directory `ensembl-application` and then running `perl ensembl-convert-coordinates.pl` on the command line. Running my script without any arguments loads the usage text.
 
 ### Answering the 'Alternatives' section
 
@@ -64,7 +61,6 @@
       
    A user can perform the same mapping between from the human assembly GRCh38 to GRCh37 . The tool uses the CrossMapper program to convert genome coordinates. This method appears advantageous because the user can simply perform the conversion in a web-based session and the tool accepts a number of file formats (e.g. BAM, BED, GFF3). Disadvantages to this method are that it is reliant on an internet connection (and its speed) and the user needs to be familiar with at least one of the input file formats.
 
-1. Could query the databases directly?
+1. The Ensembl web pages
 
-    * https://m.ensembl.org/info/website/tutorials/grch37.html :
-    * export Ensembl annotation on GRCh37 with BioMart
+    It is possible to convert coordinates through the main Ensembl web pages. The user can do this by loading the web page for the human genome (http://www.ensembl.org/Homo_sapiens/Info/Index) and then loading a location-based display page, for example using the example region link provided (http://www.ensembl.org/Homo_sapiens/Location/View?r=17:63992802-64038237). A link is provided at the bottom of the left-hand menu to view the coordinates in the Ensembl GRCh37 assembly (http://www.ensembl.org/Homo_sapiens/Help/ListMappings?alt_assembly=GRCh37;db=core;r=17:63992802-64038237). This method is advantageous because it is very simple to use. Disadvantages include reliance on an internet connection (and its speed) and not having access to the entire Ensembl database.

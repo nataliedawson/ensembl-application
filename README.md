@@ -46,20 +46,25 @@
 
 * Describe at least one other way of retrieving the same information, along with its advantages and disadvantages.
 
+1. The Ensembl REST API.
+
+   (Information sourced from: 
+      https://github.com/Ensembl/ensembl-rest/wiki/Getting-Started
+      http://rest.ensembl.org/documentation/info/assembly_map
+      https://www.ensembl.org/info/docs/index.html
+      https://www.ensembl.org/info/docs/tools/index.html)
+   
+   The Ensembl REST API provides an alternative to the Ensembl Perl API to convert the coordinates of one assembly to another. Advantages include being able to use a range of programming languages (e.g. Java, Perl, Python, Ruby) and operating systems. Disadvantages include reliance on an internet connection (and its speed) and not having access to the entire Ensembl database.
+
+
+1. The Ensembl web-based tool, Assembly Converter.
+
+   (Information sourced from:
+      http://www.ensembl.org/Homo_sapiens/Tools/AssemblyConverter). 
+      
+   A user can perform the same mapping between from the human assembly GRCh38 to GRCh37 . The tool uses the CrossMapper program to convert genome coordinates. This method appears advantageous because the user can simply perform the conversion in a web-based session and the tool accepts a number of file formats (e.g. BAM, BED, GFF3). Disadvantages to this method are that it is reliant on an internet connection (and its speed) and the user needs to be familiar with at least one of the input file formats.
+
 1. Could query the databases directly?
 
     * https://m.ensembl.org/info/website/tutorials/grch37.html :
     * export Ensembl annotation on GRCh37 with BioMart
-
-1. Could use the Ensembl REST web service
-
-    * See REST notes for GRCh37 here: `https://www.ensembl.org/info/docs/index.html`
-
-    * and accessing Ensembl data here: `https://www.ensembl.org/info/docs/tools/index.html`
-
-    * http://rest.ensembl.org/documentation/info/assembly_map - allows converting from 1. GRCh38 to 2. GRCh37, 3. a query region string, and 4. species string 
-
-    * Advantages of using REST API: don't need to know perl.
-
-1. Using the Ensembl tool called Assembly Converter. A user can perform the same mapping between from the human assembly GRCh38 to GRCh37 (`http://www.ensembl.org/Homo_sapiens/Tools/AssemblyConverter`). The tool uses the CrossMapper program to convert genome coordinates. This method appears advantageous because the user can simply perform the conversion in a web-based session and the tool accepts a number of file formats (e.g. BAM, BED, GFF3). Disadvantages to this method are that it is reliant on an internet connection and the user needs to be familiar with at least one of the input file formats.
-

@@ -102,7 +102,7 @@ die "No sequence start position provided (e.g. 25000)\n" unless $seq_start;
 die "No sequence stop position provided (e.g. 30000)\n" unless $seq_stop;
 die "No genome assembly version provided (e.g. GRCh38)\n" unless $genome_assembly_version;
 
-
+# print out values to user
 printf("COORDINATE SYSTEM NAME  : %s\n", $coord_system_name);
 printf("SEQUENCE REGION NAME    : %s\n", $seq_region_name);
 printf("SEQUENCE START          : %s\n", $seq_start);
@@ -171,16 +171,10 @@ $registry->load_registry_from_db(
 # chromosome:20:25000:30000:1:GRCh38:human
 # chromosome:20:1e6:2e6:1:GRCh38:human
 
-
-
-# get a slice adaptor for the human core database
+# create a slice adaptor object for the human core database
 my $slice_adaptor = $registry->get_adaptor( $species, $group, 'Slice' );
 
-# print Dumper( $slice_adaptor);
-# get slice from a whole chromosome
-# my $chr_slice = $slice_adaptor->fetch_by_region( 'chromosome', 'X' );
-
-
+# create a coordinate system adaptor object
 my $cs_adaptor = $registry->get_adaptor( $species, $group, 'CoordSystem' );
 my $cs = $cs_adaptor->fetch_by_name($coord_system_name);
 
@@ -203,23 +197,35 @@ my $end     ||= $slice->end();
 my $strand  ||= $slice->strand();
 my $version ||= $slice->coord_system()->version();
 
-# go through each segment in
-my $segment_counter = 1;
-foreach my $segment ( @{ $slice->project($coord_system_name) } ) {
+# go through each segment that has been converted
+my @converted_segments = @{ $slice->project($coord_system_name) };
 
-  print "Converted segment #${segment_counter}:\n";
+# account for cases where there might not be a mapping
+if ( scalar @converted_segments == 0 ) {
 
-  # print Dumper( $segment->to_Slice() );
+  printf("Could not find a mapping for %s to %s", $coordinates_string, $cs->version());
+  print "DONE.\n";
+  
+} else {
 
-  printf( "%s:%s:%s:%d:%d:%d => %s\n",
-    $cs_name,
-    $version,
-    $sr_name,
-    $start + $segment->from_start() - 1,
-    $start + $segment->from_end() - 1,
-    $strand,
-    $segment->to_Slice()->name() 
-  );
+  my $segment_counter = 1;
+  foreach my $segment ( @converted_segments ) {
 
-  $segment_counter++;
+    print "Converted segment #${segment_counter}:\n";
+
+    # print Dumper( $segment->to_Slice() );
+
+    printf( "%s:%s:%s:%d:%d:%d => %s\n",
+      $cs_name,
+      $version,
+      $sr_name,
+      $start + $segment->from_start() - 1,
+      $start + $segment->from_end() - 1,
+      $strand,
+      $segment->to_Slice()->name() 
+    );
+
+    $segment_counter++;
+  }
 }
+

@@ -4,7 +4,7 @@
 
 ## General steps in setting up environment to run my perl script
 
-1. Ensure perl is up-to-date (brew update perl). Using version 5.26, which is documented as being compatible (https://www.ensembl.org/info/docs/api/api_installation.html).
+1. I have used perl version 5.26.2 as this is documented as being compatible with the Ensembl Perl API (https://www.ensembl.org/info/docs/api/api_installation.html).
 
 1. Install Perl API (https://www.ensembl.org/info/docs/api/api_installation.html)
 
@@ -31,13 +31,47 @@
     export PERL5LIB
     ```
 
-1. Allow the perl script to find the Ensembl-specific perl modules. Please note that I have done this by incorporating the lib path into my script using the `FindBin` module.
+1. In additional to setting $PERL5LIB, I have also incorporated the lib path into my script using the `FindBin` module.
 
-    * The Ensembl modules are expected to be found in the `src/` subdirectory of this GitHub project. My script uses the `FindBin` perl module to locate these modules. I have not committed the contents of this directory to version control as it is large in size (~ 674 Mb).
+    * The Ensembl and BioPerl modules are expected to be found in the `src/` subdirectory of this GitHub project. My script uses the `FindBin` perl module to locate these modules. I have not committed the contents of this directory to version control as it is large in size (~ 674 Mb).
 
-1. Use cpanm to install the required perl modules: `cat requirements.txt | cpanm`
+1. Use cpanm to install the other required perl modules: `cat requirements.txt | cpanm`
 
-1. The script is run by changing directory to within my repository directory `ensembl-application` and then running `perl ensembl-convert-coordinates.pl` on the command line. Running my script without any arguments loads the usage text.
+1. The script is run by changing directory to within my repository directory `ensembl-application`. Running `perl ensembl-convert-coordinates.pl` on the command line loads the usage text.
+
+    * An example of input and output:
+    
+    ```
+    % perl ensembl-convert-coordinates.pl --coordinates_string="chromosome:10:25000:30000:1:GRCh38"
+    Processing user input...
+    COORDINATE SYSTEM NAME  : chromosome
+    SEQUENCE REGION NAME    : 10
+    SEQUENCE START          : 25000
+    SEQUENCE STOP           : 30000
+    STRAND                  : 1
+    SPECIES:                : Human
+    GENOME ASSEMBLY VERSION : GRCh38
+    DATABASE PORT           : 3337
+    GROUP                   : Core
+
+    Load registry from database...
+    Performing the conversion...
+
+    MAPPING FROM ASSEMBLY : GRCh38
+    MAPPING TO ASSEMBLY   : GRCh37
+
+    Converted segment #1:
+    chromosome:GRCh38:10:25000:30000:1 => chromosome:GRCh37:HG905_PATCH:75000:80000:1
+    Converted segment #2:
+    chromosome:GRCh38:10:25000:25845:1 => chromosome:GRCh37:10:70936:71781:1
+    Converted segment #3:
+    chromosome:GRCh38:10:25846:26246:1 => chromosome:GRCh37:10:71784:72184:1
+    Converted segment #4:
+    chromosome:GRCh38:10:26249:27608:1 => chromosome:GRCh37:10:72185:73544:1
+    Converted segment #5:
+    chromosome:GRCh38:10:27609:30000:1 => chromosome:GRCh37:10:73546:75937:1
+    DONE.
+    ```
 
 ### Answering the 'Alternatives' section
 
